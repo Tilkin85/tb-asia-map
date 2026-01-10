@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tuberculosis-Associated Archaeological Sites in Asia</title>
+
+  <!-- Leaflet (map library) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    header { padding: 14px 16px; border-bottom: 1px solid #e5e5e5; }
+    header h1 { margin: 0 0 6px 0; font-size: 18px; }
+    header p { margin: 0; color: #444; font-size: 13px; line-height: 1.4; }
+    #map { height: calc(100vh - 74px); }
+    .popup-title { font-weight: 700; margin-bottom: 6px; }
+    .popup-row { margin: 2px 0; }
+    .tag { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tuberculosis-Associated Archaeological Sites in Asia</h1>
+    <p>
+      Click markers for details. To edit or add sites later, update <code>data/sites.geojson</code> in this GitHub repo.
+    </p>
+  </header>
+
+  <div id="map"></div>
+
+  <script>
+    // Initialize map (centered broadly on East/Southeast Asia)
+    const map = L.map("map").setView([28.0, 117.0], 4);
+
+    // OpenStreetMap tiles
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Load GeoJSON data
+    fetch("./data/sites.geojson")
+      .then(r => {
+        if (!r.ok) throw new Error("Failed to load GeoJSON: " + r.status);
+        return r.json();
+      })
+      .then(geojson => {
+        const layer = L.geoJSON(geojson, {
+          pointToLayer: (feature, latlng) => L.marker(latlng),
+          onEachFeature: (feature, lyr) => {
+            const p = feature.properties || {};
+            const title = p.site || "Unnamed site";
+            const country = p.country || "—";
+            const admin = p.admin || "—";
+            const notes = p.notes || "";
+            const coordsNote = p.coord_quality ? `<div class="popup-row"><span class="tag">${p.coord_quality}</span></div>` : "";
+            const refs = p.references ? `<div class="popup-row"><b>Refs:</b> ${p.references}</div>` : "";
+
+            const html = `
+              <div class="popup-title">${title}</div>
+              <div class="popup-row"><b>Country:</b> ${country}</div>
+              <div class="popup-row"><b>Region/City:</b> ${admin}</div>
+              ${coordsNote}
+              ${notes ? `<div class="popup-row"><b>Notes:</b> ${notes}</div>` : ""}
+              ${refs}
+            `;
+            lyr.bindPopup(html);
+          }
+        }).addTo(map);
+
+        // Zoom map to fit all points
+        try {
+          map.fitBounds(layer.getBounds().pad(0.2));
+        } catch (e) {
+          // If only one point, fitBounds can be odd; ignore.
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Could not load site data. Check console for details.");
+      });
+  </script>
+</body>
+</html>
