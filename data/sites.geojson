@@ -38,7 +38,7 @@
         "site": "Meishan Site (Longshan culture; Linru/Ruzhou area — approximate)",
         "admin": "Ruzhou (formerly Linru County), Henan",
         "coord_quality": "Approximate (city-level)",
-        "notes": "Replace with excavation coordinates if your source provides them.",
+        "notes": "Replace with excavation coordinates when provided.",
         "references": "Ruzhou coordinates used as proxy for Linru/Meishan context."
       },
       "geometry": {
