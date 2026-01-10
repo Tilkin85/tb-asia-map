@@ -1,0 +1,110 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "Taiwan",
+        "site": "Chingsuichongshe (approx. Qingshui District)",
+        "admin": "Qingshui District, Taichung",
+        "coord_quality": "Approximate (district-level)",
+        "notes": "If you have a paper/report with the exact site location, replace these coordinates with the excavation coordinates.",
+        "references": "Qingshui District coordinates used as placeholder."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.57639, 24.28750]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "China",
+        "site": "Liuwei Cemetery (Han Dynasty; Maolingyi area — approximate)",
+        "admin": "Xingping, Shaanxi (near Maoling area)",
+        "coord_quality": "Approximate (Maoling area)",
+        "notes": "Using Maoling area coordinates as a proxy for Maolingyi/Liuwei Cemetery context; update if you have site-specific coordinates.",
+        "references": "Maoling Museum map-dot coordinates used as proxy for Maoling area."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.5864, 34.3385]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "China",
+        "site": "Meishan Site (Longshan culture; Linru/Ruzhou area — approximate)",
+        "admin": "Ruzhou (formerly Linru County), Henan",
+        "coord_quality": "Approximate (city-level)",
+        "notes": "Replace with excavation coordinates if your source provides them.",
+        "references": "Ruzhou coordinates used as proxy for Linru/Meishan context."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [112.844, 34.167]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "China",
+        "site": "Mawangdui",
+        "admin": "Changsha, Hunan",
+        "coord_quality": "Approximate (Mawangdui area)",
+        "notes": "Coordinates taken from the Mawangdui Station area as a close proxy; replace with tomb complex coordinates if needed.",
+        "references": "Mawangdui Station coordinates used as proxy."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.037531, 28.206115]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "Korea",
+        "site": "Nukdo (Neukdo) Archaeological Site",
+        "admin": "Sacheon, Gyeongsangnam-do",
+        "coord_quality": "Site coordinates (published)",
+        "notes": "Archaeological Site on Neukdo Island, Sacheon.",
+        "references": "Korean Wikipedia / cultural heritage listing."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [128.03694, 34.92333]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "Japan",
+        "site": "Aoyakamijichi Site (Aoya-Kamijichi)",
+        "admin": "Tottori, Tottori Prefecture",
+        "coord_quality": "Site coordinates (published)",
+        "notes": "Yayoi period settlement; includes reported early TB evidence in remains (per site summaries).",
+        "references": "Wikipedia site coordinates."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [133.991667, 35.513333]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "country": "Thailand",
+        "site": "Noen U-Loke",
+        "admin": "Mun River Valley, Northeast Thailand",
+        "coord_quality": "Site coordinates (published dataset)",
+        "notes": "Coordinates from an archaeological radiocarbon database record; refine if you use a different site gazetteer.",
+        "references": "intchron.org record (Oxford/OxA database compilation)."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [102.2669983, 15.25]
+      }
+    }
+  ]
+}
