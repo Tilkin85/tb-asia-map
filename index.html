@@ -5,91 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tuberculosis-Associated Archaeological Sites in Asia</title>
 
-  <!-- Leaflet (map library) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
-
   <style>
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    header { padding: 14px 16px; border-bottom: 1px solid #e5e5e5; }
+    :root { --border:#e5e5e5; --text:#111; --muted:#444; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+    header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
     header h1 { margin: 0 0 6px 0; font-size: 18px; }
-    header p { margin: 0; color: #444; font-size: 13px; line-height: 1.4; }
-    #map { height: calc(100vh - 74px); }
-    .popup-title { font-weight: 700; margin-bottom: 6px; }
-    .popup-row { margin: 2px 0; }
+    header p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    #map { height: calc(100vh - 74px); width: 100%; }
+    .infowin h3 { margin: 0 0 8px 0; font-size: 14px; }
+    .infowin .row { margin: 4px 0; font-size: 13px; }
     .tag { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
+    code { background: #f6f6f6; padding: 1px 4px; border-radius: 4px; }
   </style>
 </head>
 <body>
   <header>
     <h1>Tuberculosis-Associated Archaeological Sites in Asia</h1>
     <p>
-      Click markers for details. To edit or add sites later, update <code>data/sites.geojson</code> in this GitHub repo.
+      Google Maps basemap with English UI labels. Click markers for details.
+      To edit or add sites later, update <code>data/sites.geojson</code>.
     </p>
   </header>
 
   <div id="map"></div>
 
   <script>
-    // Initialize map (centered broadly on East/Southeast Asia)
-    const map = L.map("map").setView([28.0, 117.0], 4);
+    // 1) Add your Google Maps API key below.
+    //    - Create a key in Google Cloud Console
+    //    - Enable: "Maps JavaScript API"
+    //    - (Recommended) Restrict the key to your GitHub Pages domain
+    const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
 
-    // OpenStreetMap tiles
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    let map;
+    let infoWindow;
 
-    // Load GeoJSON data
-    fetch("./data/sites.geojson")
-      .then(r => {
-        if (!r.ok) throw new Error("Failed to load GeoJSON: " + r.status);
-        return r.json();
-      })
-      .then(geojson => {
-        const layer = L.geoJSON(geojson, {
-          pointToLayer: (feature, latlng) => L.marker(latlng),
-          onEachFeature: (feature, lyr) => {
-            const p = feature.properties || {};
-            const title = p.site || "Unnamed site";
-            const country = p.country || "—";
-            const admin = p.admin || "—";
-            const notes = p.notes || "";
-            const coordsNote = p.coord_quality ? `<div class="popup-row"><span class="tag">${p.coord_quality}</span></div>` : "";
-            const refs = p.references ? `<div class="popup-row"><b>Refs:</b> ${p.references}</div>` : "";
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-            const html = `
-              <div class="popup-title">${title}</div>
-              <div class="popup-row"><b>Country:</b> ${country}</div>
-              <div class="popup-row"><b>Region/City:</b> ${admin}</div>
-              ${coordsNote}
-              ${notes ? `<div class="popup-row"><b>Notes:</b> ${notes}</div>` : ""}
-              ${refs}
-            `;
-            lyr.bindPopup(html);
-          }
-        }).addTo(map);
-
-        // Zoom map to fit all points
-        try {
-          map.fitBounds(layer.getBounds().pad(0.2));
-        } catch (e) {
-          // If only one point, fitBounds can be odd; ignore.
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Could not load site data. Check console for details.");
+    async function initMap() {
+      // Broad center on East/Southeast Asia (will auto-fit once data loads)
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 28.0, lng: 117.0 },
+        zoom: 4,
+        mapTypeId: "roadmap",
+        fullscreenControl: true,
+        streetViewControl: false,
+        mapTypeControl: true
       });
+
+      infoWindow = new google.maps.InfoWindow();
+
+      // Load GeoJSON and drop markers
+      const res = await fetch("./data/sites.geojson");
+      if (!res.ok) throw new Error("Failed to load GeoJSON: " + res.status);
+      const geojson = await res.json();
+
+      const bounds = new google.maps.LatLngBounds();
+
+      (geojson.features || []).forEach((f) => {
+        if (!f || !f.geometry || f.geometry.type !== "Point") return;
+        const coords = f.geometry.coordinates || [];
+        const lng = Number(coords[0]);
+        const lat = Number(coords[1]);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+        const p = f.properties || {};
+        const title = p.site || "Unnamed site";
+        const country = p.country || "—";
+        const admin = p.admin || "—";
+        const notes = p.notes || "";
+        const coordQuality = p.coord_quality || "";
+        const refs = p.references || "";
+
+        const position = { lat, lng };
+        bounds.extend(position);
+
+        const marker = new google.maps.Marker({
+          map,
+          position,
+          title: title
+        });
+
+        const html = `
+          <div class="infowin">
+            <h3>${escapeHtml(title)}</h3>
+            <div class="row"><b>Country:</b> ${escapeHtml(country)}</div>
+            <div class="row"><b>City/Region:</b> ${escapeHtml(admin)}</div>
+            ${coordQuality ? `<div class="row"><span class="tag">${escapeHtml(coordQuality)}</span></div>` : ""}
+            ${notes ? `<div class="row"><b>Notes:</b> ${escapeHtml(notes)}</div>` : ""}
+            ${refs ? `<div class="row"><b>Refs:</b> ${escapeHtml(refs)}</div>` : ""}
+            <div class="row"><b>Coordinates:</b> ${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+          </div>
+        `;
+
+        marker.addListener("click", () => {
+          infoWindow.setContent(html);
+          infoWindow.open({ map, anchor: marker });
+        });
+      });
+
+      // Fit to all markers (fallback keeps default if no points)
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, 60);
+      }
+    }
+
+    function loadGoogleMaps() {
+      if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY") {
+        document.getElementById("map").innerHTML =
+          "<div style='padding:16px'>Add your Google Maps API key in <code>index.html</code> (look for <code>GOOGLE_MAPS_API_KEY</code>), then refresh.</div>";
+        return;
+      }
+      const script = document.createElement("script");
+      // language=en forces English UI labels where supported.
+      script.src =
+        "https://maps.googleapis.com/maps/api/js?key=" +
+        encodeURIComponent(GOOGLE_MAPS_API_KEY) +
+        "&callback=initMap&language=en&region=US";
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => alert("Failed to load Google Maps JS API. Check your API key and enabled APIs.");
+      document.head.appendChild(script);
+    }
+
+    window.initMap = initMap;
+    loadGoogleMaps();
   </script>
 </body>
 </html>
