@@ -1,50 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tuberculosis-Associated Archaeological Sites in Asia</title>
+  <title>TB in Asia Map</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 
   <style>
-    :root { --border:#e5e5e5; --text:#111; --muted:#444; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
-    header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
-    header h1 { margin: 0 0 6px 0; font-size: 18px; }
-    header p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
-    #map { height: calc(100vh - 74px); width: 100%; }
-    .infowin h3 { margin: 0 0 8px 0; font-size: 14px; }
-    .infowin .row { margin: 4px 0; font-size: 13px; }
-    .tag { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
-    code { background: #f6f6f6; padding: 1px 4px; border-radius: 4px; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #ddd;
+      padding: 14px 18px 10px 18px;
+      z-index: 1000;
+    }
+
+    header h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    #map {
+      flex: 1;
+      min-height: 500px;
+      width: 100%;
+    }
+
+    .infowin {
+      max-width: 300px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .infowin h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .infowin .row {
+      margin: 4px 0;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e9eef6;
+      font-size: 12px;
+    }
+
+    .error-box {
+      padding: 16px;
+      background: #fff3f3;
+      border: 1px solid #e2b4b4;
+      color: #7a1f1f;
+      margin: 14px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .leaflet-popup-content {
+      margin: 12px 14px;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Tuberculosis-Associated Archaeological Sites in Asia</h1>
-    <p>
-      Google Maps basemap with English UI labels. Click markers for details.
-      To edit or add sites later, update <code>data/sites.geojson</code>.
-    </p>
+    <h1>TB in Asia</h1>
+    <p>Interactive map of archaeological and historical tuberculosis-related sites.</p>
   </header>
 
   <div id="map"></div>
 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
   <script>
-    // 1) Add your Google Maps API key below.
-    //    - Create a key in Google Cloud Console
-    //    - Enable: "Maps JavaScript API"
-    //    - (Recommended) Restrict the key to your GitHub Pages domain
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApdrDaiW8nEJO2j15Qvf0hsPsAqJ&language=en&region=US&callback=initMap"
-  async
-  defer>
-</script>
-
-    let map;
-    let infoWindow;
-
-    function escapeHtml(s) {
-      return String(s ?? "")
+    function escapeHtml(value) {
+      return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -52,94 +113,98 @@
         .replaceAll("'", "&#039;");
     }
 
-    async function initMap() {
-      // Broad center on East/Southeast Asia (will auto-fit once data loads)
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 28.0, lng: 117.0 },
-        zoom: 4,
-        mapTypeId: "roadmap",
-        fullscreenControl: true,
-        streetViewControl: false,
-        mapTypeControl: true
-      });
+    const map = L.map("map", {
+      zoomControl: true
+    }).setView([28.0, 117.0], 4);
 
-      infoWindow = new google.maps.InfoWindow();
+    const imagery = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution: '&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+        maxZoom: 19
+      }
+    );
 
-      // Load GeoJSON and drop markers
-      const res = await fetch("./data/sites.geojson");
-      if (!res.ok) throw new Error("Failed to load GeoJSON: " + res.status);
-      const geojson = await res.json();
+    const labels = L.tileLayer(
+      "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution: '&copy; Esri',
+        maxZoom: 19,
+        pane: "overlayPane"
+      }
+    );
 
-      const bounds = new google.maps.LatLngBounds();
+    imagery.addTo(map);
+    labels.addTo(map);
 
-      (geojson.features || []).forEach((f) => {
-        if (!f || !f.geometry || f.geometry.type !== "Point") return;
-        const coords = f.geometry.coordinates || [];
-        const lng = Number(coords[0]);
-        const lat = Number(coords[1]);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    const overlays = {
+      "Place Labels": labels
+    };
 
-        const p = f.properties || {};
-        const title = p.site || "Unnamed site";
-        const country = p.country || "—";
-        const admin = p.admin || "—";
-        const notes = p.notes || "";
-        const coordQuality = p.coord_quality || "";
-        const refs = p.references || "";
+    const baseMaps = {
+      "Aerial View": imagery
+    };
 
-        const position = { lat, lng };
-        bounds.extend(position);
+    L.control.layers(baseMaps, overlays, { collapsed: false }).addTo(map);
 
-        const marker = new google.maps.Marker({
-          map,
-          position,
-          title: title
-        });
+    fetch("./data/sites.geojson")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Could not load ./data/sites.geojson");
+        }
+        return response.json();
+      })
+      .then((geojson) => {
+        const geoLayer = L.geoJSON(geojson, {
+          pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+              radius: 6,
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.85
+            });
+          },
+          onEachFeature: function(feature, layer) {
+            const p = feature.properties || {};
 
-        const html = `
-          <div class="infowin">
-            <h3>${escapeHtml(title)}</h3>
-            <div class="row"><b>Country:</b> ${escapeHtml(country)}</div>
-            <div class="row"><b>City/Region:</b> ${escapeHtml(admin)}</div>
-            ${coordQuality ? `<div class="row"><span class="tag">${escapeHtml(coordQuality)}</span></div>` : ""}
-            ${notes ? `<div class="row"><b>Notes:</b> ${escapeHtml(notes)}</div>` : ""}
-            ${refs ? `<div class="row"><b>Refs:</b> ${escapeHtml(refs)}</div>` : ""}
-            <div class="row"><b>Coordinates:</b> ${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
-          </div>
+            const site = p.site || "Unnamed site";
+            const country = p.country || "—";
+            const admin = p.admin || p.region || p.city || "—";
+            const notes = p.notes || "";
+            const coordQuality = p.coord_quality || "";
+            const refs = p.references || p.refs || "";
+
+            const html = `
+              <div class="infowin">
+                <h3>${escapeHtml(site)}</h3>
+                <div class="row"><b>Country:</b> ${escapeHtml(country)}</div>
+                <div class="row"><b>City/Region:</b> ${escapeHtml(admin)}</div>
+                ${coordQuality ? `<div class="row"><span class="tag">${escapeHtml(coordQuality)}</span></div>` : ""}
+                ${notes ? `<div class="row"><b>Notes:</b> ${escapeHtml(notes)}</div>` : ""}
+                ${refs ? `<div class="row"><b>Refs:</b> ${escapeHtml(refs)}</div>` : ""}
+              </div>
+            `;
+
+            layer.bindPopup(html);
+          }
+        }).addTo(map);
+
+        const bounds = geoLayer.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [30, 30] });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+
+        const errorBox = document.createElement("div");
+        errorBox.className = "error-box";
+        errorBox.innerHTML = `
+          <b>Map data could not be loaded.</b><br>
+          Make sure your GeoJSON file is located at <code>data/sites.geojson</code>.
         `;
-
-        marker.addListener("click", () => {
-          infoWindow.setContent(html);
-          infoWindow.open({ map, anchor: marker });
-        });
+        document.body.appendChild(errorBox);
       });
-
-      // Fit to all markers (fallback keeps default if no points)
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, 60);
-      }
-    }
-
-    function loadGoogleMaps() {
-      if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY") {
-        document.getElementById("map").innerHTML =
-          "<div style='padding:16px'>Add your Google Maps API key in <code>index.html</code> (look for <code>GOOGLE_MAPS_API_KEY</code>), then refresh.</div>";
-        return;
-      }
-      const script = document.createElement("script");
-      // language=en forces English UI labels where supported.
-      script.src =
-        "https://maps.googleapis.com/maps/api/js?key=" +
-        encodeURIComponent(GOOGLE_MAPS_API_KEY) +
-        "&callback=initMap&language=en&region=US";
-      script.async = true;
-      script.defer = true;
-      script.onerror = () => alert("Failed to load Google Maps JS API. Check your API key and enabled APIs.");
-      document.head.appendChild(script);
-    }
-
-    window.initMap = initMap;
-    loadGoogleMaps();
   </script>
 </body>
 </html>
