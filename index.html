@@ -1,210 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TB in Asia Map</title>
+<script>
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
+  const map = L.map("map", {
+    zoomControl: true
+  }).setView([28.0, 117.0], 4);
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
+  const imagery = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: '&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+      maxZoom: 19
     }
+  );
 
-    body {
-      display: flex;
-      flex-direction: column;
+  const labels = L.tileLayer(
+    "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: '&copy; Esri',
+      maxZoom: 19,
+      pane: "overlayPane"
     }
+  );
 
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #ddd;
-      padding: 14px 18px 10px 18px;
-      z-index: 1000;
+  imagery.addTo(map);
+  labels.addTo(map);
+
+  L.control.layers(
+    { "Aerial View": imagery },
+    { "Place Labels": labels },
+    { collapsed: false }
+  ).addTo(map);
+
+  const sites = [
+    {
+      site: "Chingsuichongshe",
+      country: "Taiwan",
+      admin: "City of Taichung",
+      lat: 24.1477,
+      lng: 120.6736,
+      notes: ""
+    },
+    {
+      site: "Liuwei Cemetery",
+      country: "China",
+      admin: "Shaanxi Province",
+      lat: 34.3416,
+      lng: 108.9398,
+      notes: ""
+    },
+    {
+      site: "Meishan",
+      country: "China",
+      admin: "Henan Province",
+      lat: 34.7473,
+      lng: 113.6254,
+      notes: ""
+    },
+    {
+      site: "Mawangtui",
+      country: "China",
+      admin: "City of Changsha, Hunan Province",
+      lat: 28.2278,
+      lng: 112.9388,
+      notes: ""
+    },
+    {
+      site: "Nukdo",
+      country: "Korea",
+      admin: "Unknown / confirm city",
+      lat: 35.1000,
+      lng: 128.9000,
+      notes: "Approximate location"
+    },
+    {
+      site: "Aoyakamijichi",
+      country: "Japan",
+      admin: "Unknown / confirm city",
+      lat: 35.6895,
+      lng: 139.6917,
+      notes: "Approximate location"
+    },
+    {
+      site: "Noen U-Loke",
+      country: "Thailand",
+      admin: "Mun River Valley, Northeast Thailand",
+      lat: 15.2200,
+      lng: 102.1200,
+      notes: "Approximate location"
     }
+  ];
 
-    header h1 {
-      margin: 0 0 4px 0;
-      font-size: 22px;
-      line-height: 1.2;
-    }
+  const markerLayer = L.layerGroup().addTo(map);
+  const bounds = [];
 
-    header p {
-      margin: 0;
-      font-size: 14px;
-      color: #555;
-    }
+  sites.forEach((p) => {
+    if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) return;
 
-    #map {
-      flex: 1;
-      min-height: 500px;
-      width: 100%;
-    }
+    const marker = L.circleMarker([p.lat, p.lng], {
+      radius: 6,
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.85
+    }).addTo(markerLayer);
 
-    .infowin {
-      max-width: 300px;
-      line-height: 1.4;
-      font-size: 14px;
-    }
+    const html = `
+      <div class="infowin">
+        <h3>${escapeHtml(p.site)}</h3>
+        <div class="row"><b>Country:</b> ${escapeHtml(p.country)}</div>
+        <div class="row"><b>City/Region:</b> ${escapeHtml(p.admin)}</div>
+        ${p.notes ? `<div class="row"><b>Notes:</b> ${escapeHtml(p.notes)}</div>` : ""}
+        <div class="row"><b>Coordinates:</b> ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
+      </div>
+    `;
 
-    .infowin h3 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-    }
+    marker.bindPopup(html);
+    bounds.push([p.lat, p.lng]);
+  });
 
-    .infowin .row {
-      margin: 4px 0;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #e9eef6;
-      font-size: 12px;
-    }
-
-    .error-box {
-      padding: 16px;
-      background: #fff3f3;
-      border: 1px solid #e2b4b4;
-      color: #7a1f1f;
-      margin: 14px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .leaflet-popup-content {
-      margin: 12px 14px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>TB in Asia</h1>
-    <p>Interactive map of archaeological and historical tuberculosis-related sites.</p>
-  </header>
-
-  <div id="map"></div>
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
-
-  <script>
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    const map = L.map("map", {
-      zoomControl: true
-    }).setView([28.0, 117.0], 4);
-
-    const imagery = L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      {
-        attribution: '&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community',
-        maxZoom: 19
-      }
-    );
-
-    const labels = L.tileLayer(
-      "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-      {
-        attribution: '&copy; Esri',
-        maxZoom: 19,
-        pane: "overlayPane"
-      }
-    );
-
-    imagery.addTo(map);
-    labels.addTo(map);
-
-    const overlays = {
-      "Place Labels": labels
-    };
-
-    const baseMaps = {
-      "Aerial View": imagery
-    };
-
-    L.control.layers(baseMaps, overlays, { collapsed: false }).addTo(map);
-
-    fetch("./data/sites.geojson")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Could not load ./data/sites.geojson");
-        }
-        return response.json();
-      })
-      .then((geojson) => {
-        const geoLayer = L.geoJSON(geojson, {
-          pointToLayer: function(feature, latlng) {
-            return L.circleMarker(latlng, {
-              radius: 6,
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.85
-            });
-          },
-          onEachFeature: function(feature, layer) {
-            const p = feature.properties || {};
-
-            const site = p.site || "Unnamed site";
-            const country = p.country || "—";
-            const admin = p.admin || p.region || p.city || "—";
-            const notes = p.notes || "";
-            const coordQuality = p.coord_quality || "";
-            const refs = p.references || p.refs || "";
-
-            const html = `
-              <div class="infowin">
-                <h3>${escapeHtml(site)}</h3>
-                <div class="row"><b>Country:</b> ${escapeHtml(country)}</div>
-                <div class="row"><b>City/Region:</b> ${escapeHtml(admin)}</div>
-                ${coordQuality ? `<div class="row"><span class="tag">${escapeHtml(coordQuality)}</span></div>` : ""}
-                ${notes ? `<div class="row"><b>Notes:</b> ${escapeHtml(notes)}</div>` : ""}
-                ${refs ? `<div class="row"><b>Refs:</b> ${escapeHtml(refs)}</div>` : ""}
-              </div>
-            `;
-
-            layer.bindPopup(html);
-          }
-        }).addTo(map);
-
-        const bounds = geoLayer.getBounds();
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [30, 30] });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-
-        const errorBox = document.createElement("div");
-        errorBox.className = "error-box";
-        errorBox.innerHTML = `
-          <b>Map data could not be loaded.</b><br>
-          Make sure your GeoJSON file is located at <code>data/sites.geojson</code>.
-        `;
-        document.body.appendChild(errorBox);
-      });
-  </script>
-</body>
-</html>
+  if (bounds.length) {
+    map.fitBounds(bounds, { padding: [30, 30] });
+  }
+</script>
