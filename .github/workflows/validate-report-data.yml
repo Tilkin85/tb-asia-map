@@ -23,9 +23,7 @@ jobs:
       - name: Validate and generate exports
         shell: python
         run: |
-          import base64
           import csv
-          import gzip
           import io
           import json
           import re
@@ -51,8 +49,11 @@ jobs:
 
           complete_manifest, complete = load_partitioned(data_dir / 'chingshui-chongshe-records.json')
           assert len(complete) == complete_manifest['record_count'] == 53, len(complete)
-          ids = [record['id'] for record in complete]
-          assert len(ids) == len(set(ids)), 'Duplicate complete-burial IDs'
+          assert len({record['id'] for record in complete}) == 53, 'Duplicate complete-burial IDs'
+          assert sum(record['source_group'] == '2020_curation_project' for record in complete) == 38
+          assert sum(record['source_group'] == 'prior_curation' for record in complete) == 15
+          assert sum(record['cultural_layer_en'] == 'Upper cultural layer' for record in complete) == 15
+          assert sum(record['cultural_layer_en'] == 'Lower cultural layer' for record in complete) == 38
 
           untranslated = []
           for record in complete:
@@ -75,32 +76,23 @@ jobs:
           generated_path = artifact_dir / 'chingshui-chongshe-records.csv'
           generated_path.write_text(generated_csv, encoding='utf-8')
           committed_csv = (data_dir / 'chingshui-chongshe-records.csv').read_text(encoding='utf-8')
-          assert committed_csv == generated_csv, 'Complete-burial CSV is out of sync with the JSON records. Download the validation artifact and replace the committed CSV.'
+          assert committed_csv == generated_csv, 'Complete-burial CSV is out of sync with the JSON records.'
 
           fragmentary_manifest = json.loads((data_dir / 'chingshui-chongshe-fragmentary.json').read_text(encoding='utf-8-sig'))
           fragmentary = fragmentary_manifest['records']
           assert len(fragmentary) == 15, len(fragmentary)
           assert len({record['id'] for record in fragmentary}) == 15, 'Duplicate fragmentary IDs'
+          assert sum(record['record_type'] == 'fragmentary_human' for record in fragmentary) == 8
+          assert sum(record['record_type'] == 'animal_or_mixed' for record in fragmentary) == 7
           fragmentary_csv = list(csv.DictReader((data_dir / 'chingshui-chongshe-fragmentary.csv').open(encoding='utf-8-sig', newline='')))
           assert len(fragmentary_csv) == 15, len(fragmentary_csv)
 
-          details_manifest = json.loads((data_dir / 'chingshui-chongshe-details.json.gz.b64').read_text(encoding='utf-8'))
-          detail_records = []
-          if details_manifest.get('encoding') == 'gzip+base64' and details_manifest.get('parts'):
-              detail_chunks = []
-              for part_name in details_manifest['parts']:
-                  part_path = data_dir / part_name
-                  assert part_path.exists(), f'Missing detail chunk: {part_path}'
-                  detail_chunks.append(part_path.read_text(encoding='ascii').strip())
-              compressed = base64.b64decode(''.join(detail_chunks), validate=True)
-              details = json.loads(gzip.decompress(compressed).decode('utf-8'))
-              detail_records = details['records']
-              assert len(detail_records) == details_manifest['record_count'], len(detail_records)
-              assert len({record['id'] for record in detail_records}) == len(detail_records), 'Duplicate detailed-record IDs'
-              project_ids = {record['id'] for record in complete if record['source_group'] == '2020_curation_project'}
-              assert {record['id'] for record in detail_records} == project_ids, 'Detailed record IDs do not match the 38 project records'
-          else:
-              assert details_manifest.get('record_count') == 0 and not details_manifest.get('parts'), 'Disabled detail manifest must have zero records and no parts'
+          fragmentary_untranslated = []
+          for record in fragmentary:
+              for key, value in record.items():
+                  if key.endswith('_en') and isinstance(value, str) and cjk.search(value):
+                      fragmentary_untranslated.append(f"{record['id']}:{key}={value}")
+          assert not fragmentary_untranslated, 'Untranslated fragmentary English fields:\n' + '\n'.join(fragmentary_untranslated)
 
           for page_name in ('chingshui-data.html', 'database.html'):
               page = (root / page_name).read_text(encoding='utf-8')
@@ -112,7 +104,8 @@ jobs:
                       continue
                   assert (root / clean).exists(), f'{page_name} references missing file: {clean}'
 
-          print(f'Validated {len(complete)} complete burials, {len(fragmentary)} fragmentary/mixed packages, and {len(detail_records)} detailed records.')
+          assert 'chingshui-chongshe-details' not in (root / 'chingshui-data.js').read_text(encoding='utf-8')
+          print(f'Validated {len(complete)} complete burials and {len(fragmentary)} fragmentary/mixed packages.')
       - name: Upload generated CSV
         if: always()
         uses: actions/upload-artifact@v4
