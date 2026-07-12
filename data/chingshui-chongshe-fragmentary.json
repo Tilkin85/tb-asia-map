@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "coverage": "15 fragmentary packages processed in the project: eight human fragment groups and seven animal or mixed groups.",
+    "translation_scope": "English research translation of Tables 7-8 and the associated curation narrative."
+  },
+  "records": [
+    {
+      "id": "M9",
+      "record_type": "fragmentary_human",
+      "unit": "A-T0-1P1",
+      "layer": "L3c",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "Mostly tibial and other limb-bone fragments. Articular surfaces are missing or broken, and bone quality is poor.",
+      "description_zh": "多為脛骨與其他肢骨殘件，關節面皆缺失或斷裂，骨質狀況差。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M12",
+      "record_type": "fragmentary_human",
+      "unit": "A-T4P1",
+      "layer": "L3d",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "Fragments of parietal and frontal bone; no teeth were observed.",
+      "description_zh": "為頂骨、額骨殘件，未見有牙齒。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M14",
+      "record_type": "fragmentary_human",
+      "unit": "A-T6P1",
+      "layer": "L3e",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "A pair of femora, patellae, and tibiae. Only the distal femora and proximal tibiae survive.",
+      "description_zh": "為一對股骨、髕骨與脛骨，但股骨僅剩遠端，脛骨剩近端。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M21",
+      "record_type": "fragmentary_human",
+      "unit": "B-T25P0",
+      "layer": "L2",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "A pair of tibiae. The left is more complete, with both ends present but damaged laterally; the right preserves only the shaft. Bone quality is relatively better than in the other fragmentary groups.",
+      "description_zh": "為一對脛骨，左側脛骨骨骼較為完整，兩端關節雖皆有留存，但兩端的外側都破損了，而右邊則僅存骨幹，骨質保存相對其他幾具來得佳。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M25",
+      "record_type": "fragmentary_human",
+      "unit": "B-T29P0",
+      "layer": "L3b",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "A comparatively complete left femur with very poor bone quality and flaking cortex. The lesser trochanter is damaged, but the general form of both major articular ends survives.",
+      "description_zh": "擁有較完整的左側股骨骨骼，但骨質相當差，整飭過程中骨皮極易脫落。其小轉子破損，兩端主要關節都有留存大致形狀。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M51",
+      "record_type": "fragmentary_human",
+      "unit": "D-T58P2",
+      "layer": "L3e",
+      "head_direction": "Unknown",
+      "burial_position": "Prone",
+      "preservation": "Poor",
+      "description_en": "Poor-quality fragments, mostly from lower-limb bones; proximal and distal ends are generally missing.",
+      "description_zh": "骨質狀況差，多為下半身肢骨殘件，骨骼近、遠端多缺失。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M62",
+      "record_type": "fragmentary_human",
+      "unit": "Found scattered during drainage-ditch excavation; context and burial position could not be determined",
+      "layer": "Unknown",
+      "head_direction": "Unknown",
+      "burial_position": "Unknown",
+      "preservation": "Poor",
+      "description_en": "Scattered human bone found during drainage-ditch excavation; layer and burial position could not be established.",
+      "description_zh": "在水溝發掘時散落出現，無法確認出土層位與葬姿。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M64",
+      "record_type": "fragmentary_human",
+      "unit": "E-T013P7",
+      "layer": "L3e",
+      "head_direction": "E22°S",
+      "burial_position": "Prone",
+      "preservation": "Very poor",
+      "description_en": "Both tibial and fibular shafts are identifiable, but only the shafts survive. Because the bone was extremely fragile, it was removed from the soil without washing.",
+      "description_zh": "骨質保存極差，惟兩邊脛骨及腓骨可辨認，皆僅存骨幹。又因保存狀況差，容易破碎，為了保持骨骼完整度，故沒有進行清洗，僅從土中取出。",
+      "source_report_pages": "344-346"
+    },
+    {
+      "id": "M3",
+      "record_type": "animal_or_mixed",
+      "unit": "A-T12P0",
+      "layer": "L3b",
+      "original_interpretation_en": "Fibula, femur, and tibia were reported; a pottery jar and charcoal occurred to the east. Human disturbance and secondary burial were considered possible.",
+      "reassessment_en": "Probable dog burial. One package also contained a human femoral shaft and unidentified fragments; M3 may relate to M8.",
+      "original_interpretation_zh": "有腓、股、脛骨，東側有陶罐，並有炭出土，可能受過人為擾亂，不排除二次葬的可能。",
+      "reassessment_zh": "疑似犬隻墓葬；其中亦有一件人類股骨骨幹與不明骨骼碎片。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M7",
+      "record_type": "animal_or_mixed",
+      "unit": "A-T10P0",
+      "layer": "L3c",
+      "original_interpretation_en": "Disturbed, poorly preserved north-south leg bones and phalanges.",
+      "reassessment_en": "Cervid tibia, antler, and other cervid remains.",
+      "original_interpretation_zh": "遭人為擾動，保存狀況差，僅見南北向的腿骨和趾骨。",
+      "reassessment_zh": "鹿脛骨、鹿角等骨骼。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M8",
+      "record_type": "animal_or_mixed",
+      "unit": "A-T12P1",
+      "layer": "L3c",
+      "original_interpretation_en": "Originally interpreted as the lower half of a small child in a slightly flexed side-lying position.",
+      "reassessment_en": "Probable dog burial, representing the lower body; may belong to the same individual as M3.",
+      "original_interpretation_zh": "骨骼細小應為孩童，僅見下半身，依照骨盆與下肢骨走向為南北向，側身略彎曲。",
+      "reassessment_zh": "疑似犬隻墓葬。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M22",
+      "record_type": "animal_or_mixed",
+      "unit": "B-T28P0",
+      "layer": "L3a",
+      "original_interpretation_en": "A cranium and mandible were reported, with displaced teeth in the southeast and parietal bone to the west.",
+      "reassessment_en": "Unidentified fragments, probably from a small mammal.",
+      "original_interpretation_zh": "僅有一個頭骨，可見下頷骨，不過似已錯位，牙齒出現在東南角，頂骨在西側。",
+      "reassessment_zh": "不明碎骨，疑似小型哺乳類動物碎骨。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M23",
+      "record_type": "animal_or_mixed",
+      "unit": "B-T25P0",
+      "layer": "L3a",
+      "original_interpretation_en": "A pelvic fragment was reported one meter south of M21 and one level above, suggesting a possible association.",
+      "reassessment_en": "Small-mammal fragments including a pig tooth and pig ulna.",
+      "original_interpretation_zh": "見一個骨盆碎片，南側1m處於上一層出現M21，也許兩者有關。",
+      "reassessment_zh": "小型哺乳類動物碎骨，含有豬牙以及豬尺骨。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M29",
+      "record_type": "animal_or_mixed",
+      "unit": "B-T15-16P4",
+      "layer": "L3c",
+      "original_interpretation_en": "Disturbed and incomplete; phalanges were northwest of the femur and the original arrangement could not be reconstructed.",
+      "reassessment_en": "Mostly small-mammal remains, with some human bone. A human left foot was present, including nearly all metatarsals and most tarsals.",
+      "original_interpretation_zh": "擾動，部位不完整，見趾骨位於股骨的西北側，無法看出原貌。",
+      "reassessment_zh": "小型哺乳類動物骨骼，但見有少量人骨。",
+      "source_report_pages": "348-350"
+    },
+    {
+      "id": "M45",
+      "record_type": "animal_or_mixed",
+      "unit": "B-T17P4",
+      "layer": "L3f",
+      "original_interpretation_en": "Disturbed, with only cranial and a few possible joint fragments reported.",
+      "reassessment_en": "Mostly cervid and pig fragments, with several human bones.",
+      "original_interpretation_zh": "受到擾動，僅見頭骨與少量疑似關節的部分。",
+      "reassessment_zh": "多為鹿骨、豬骨等殘片，但見有數件人骨。",
+      "source_report_pages": "348-350"
+    }
+  ]
+}
