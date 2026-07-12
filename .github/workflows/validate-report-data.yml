@@ -1,0 +1,92 @@
+name: Validate report dataset
+
+on:
+  pull_request:
+    paths:
+      - 'chingshui-data.*'
+      - 'database.html'
+      - 'index.html'
+      - 'data/**'
+      - '.github/workflows/validate-report-data.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON, translations, downloads, and detail archive
+        shell: python
+        run: |
+          import base64
+          import csv
+          import gzip
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path('.')
+          data_dir = root / 'data'
+          cjk = re.compile(r'[\u3400-\u9fff]')
+
+          def load_partitioned(path):
+              manifest = json.loads(path.read_text(encoding='utf-8-sig'))
+              records = []
+              for part_name in manifest.get('parts', []):
+                  part_path = path.parent / part_name
+                  assert part_path.exists(), f'Missing partition: {part_path}'
+                  part = json.loads(part_path.read_text(encoding='utf-8-sig'))
+                  records.extend(part.get('records', []))
+              if 'records' in manifest:
+                  records = manifest['records']
+              return manifest, records
+
+          complete_manifest, complete = load_partitioned(data_dir / 'chingshui-chongshe-records.json')
+          assert len(complete) == complete_manifest['record_count'] == 53, len(complete)
+          ids = [record['id'] for record in complete]
+          assert len(ids) == len(set(ids)), 'Duplicate complete-burial IDs'
+
+          untranslated = []
+          for record in complete:
+              for key, value in record.items():
+                  if key.endswith('_en') and isinstance(value, str) and cjk.search(value):
+                      untranslated.append(f"{record['id']}:{key}={value}")
+          assert not untranslated, 'Untranslated English fields:\n' + '\n'.join(untranslated)
+
+          fragmentary_manifest = json.loads((data_dir / 'chingshui-chongshe-fragmentary.json').read_text(encoding='utf-8-sig'))
+          fragmentary = fragmentary_manifest['records']
+          assert len(fragmentary) == 15, len(fragmentary)
+          assert len({record['id'] for record in fragmentary}) == 15, 'Duplicate fragmentary IDs'
+
+          details_manifest = json.loads((data_dir / 'chingshui-chongshe-details.json.gz.b64').read_text(encoding='utf-8'))
+          detail_chunks = []
+          for part_name in details_manifest['parts']:
+              part_path = data_dir / part_name
+              assert part_path.exists(), f'Missing detail chunk: {part_path}'
+              detail_chunks.append(part_path.read_text(encoding='ascii').strip())
+          compressed = base64.b64decode(''.join(detail_chunks), validate=True)
+          details = json.loads(gzip.decompress(compressed).decode('utf-8'))
+          detail_records = details['records']
+          assert len(detail_records) == details_manifest['record_count'] == 38, len(detail_records)
+          assert len({record['id'] for record in detail_records}) == 38, 'Duplicate detailed-record IDs'
+          project_ids = {record['id'] for record in complete if record['source_group'] == '2020_curation_project'}
+          assert {record['id'] for record in detail_records} == project_ids, 'Detailed record IDs do not match the 38 project records'
+
+          fragmentary_csv = list(csv.DictReader((data_dir / 'chingshui-chongshe-fragmentary.csv').open(encoding='utf-8-sig', newline='')))
+          assert len(fragmentary_csv) == 15, len(fragmentary_csv)
+
+          # Verify local data/download references from the two public pages.
+          for page_name in ('chingshui-data.html', 'database.html'):
+              page = (root / page_name).read_text(encoding='utf-8')
+              for target in re.findall(r'(?:href|src)=["\']([^"\']+)["\']', page):
+                  if target.startswith(('http:', 'https:', '#', 'mailto:')):
+                      continue
+                  clean = target.split('#', 1)[0].split('?', 1)[0]
+                  if not clean:
+                      continue
+                  assert (root / clean).exists(), f'{page_name} references missing file: {clean}'
+
+          print(f'Validated {len(complete)} complete burials, {len(fragmentary)} fragmentary/mixed packages, and {len(detail_records)} detailed records.')
