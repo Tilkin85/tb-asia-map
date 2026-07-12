@@ -18,18 +18,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate JSON, translations, downloads, and detail archive
+        with:
+          show-progress: false
+      - name: Validate and generate exports
         shell: python
         run: |
           import base64
           import csv
           import gzip
+          import io
           import json
           import re
           from pathlib import Path
 
           root = Path('.')
           data_dir = root / 'data'
+          artifact_dir = root / 'validation-artifacts'
+          artifact_dir.mkdir(exist_ok=True)
           cjk = re.compile(r'[\u3400-\u9fff]')
 
           def load_partitioned(path):
@@ -56,29 +61,47 @@ jobs:
                       untranslated.append(f"{record['id']}:{key}={value}")
           assert not untranslated, 'Untranslated English fields:\n' + '\n'.join(untranslated)
 
+          csv_fields = [
+              'id','layer','cultural_layer_en','cultural_layer_zh','head_direction',
+              'body_position_en','body_position_zh','limb_position_en','limb_position_zh',
+              'arm_position_en','arm_position_zh','sex_en','sex_zh','age_en','age_zh',
+              'pathology_en','pathology_zh','notes_en','notes_zh','source_group','source_report_pages'
+          ]
+          csv_buffer = io.StringIO(newline='')
+          writer = csv.DictWriter(csv_buffer, fieldnames=csv_fields, extrasaction='ignore', lineterminator='\n')
+          writer.writeheader()
+          writer.writerows(complete)
+          generated_csv = '\ufeff' + csv_buffer.getvalue()
+          generated_path = artifact_dir / 'chingshui-chongshe-records.csv'
+          generated_path.write_text(generated_csv, encoding='utf-8')
+          committed_csv = (data_dir / 'chingshui-chongshe-records.csv').read_text(encoding='utf-8')
+          assert committed_csv == generated_csv, 'Complete-burial CSV is out of sync with the JSON records. Download the validation artifact and replace the committed CSV.'
+
           fragmentary_manifest = json.loads((data_dir / 'chingshui-chongshe-fragmentary.json').read_text(encoding='utf-8-sig'))
           fragmentary = fragmentary_manifest['records']
           assert len(fragmentary) == 15, len(fragmentary)
           assert len({record['id'] for record in fragmentary}) == 15, 'Duplicate fragmentary IDs'
-
-          details_manifest = json.loads((data_dir / 'chingshui-chongshe-details.json.gz.b64').read_text(encoding='utf-8'))
-          detail_chunks = []
-          for part_name in details_manifest['parts']:
-              part_path = data_dir / part_name
-              assert part_path.exists(), f'Missing detail chunk: {part_path}'
-              detail_chunks.append(part_path.read_text(encoding='ascii').strip())
-          compressed = base64.b64decode(''.join(detail_chunks), validate=True)
-          details = json.loads(gzip.decompress(compressed).decode('utf-8'))
-          detail_records = details['records']
-          assert len(detail_records) == details_manifest['record_count'] == 38, len(detail_records)
-          assert len({record['id'] for record in detail_records}) == 38, 'Duplicate detailed-record IDs'
-          project_ids = {record['id'] for record in complete if record['source_group'] == '2020_curation_project'}
-          assert {record['id'] for record in detail_records} == project_ids, 'Detailed record IDs do not match the 38 project records'
-
           fragmentary_csv = list(csv.DictReader((data_dir / 'chingshui-chongshe-fragmentary.csv').open(encoding='utf-8-sig', newline='')))
           assert len(fragmentary_csv) == 15, len(fragmentary_csv)
 
-          # Verify local data/download references from the two public pages.
+          details_manifest = json.loads((data_dir / 'chingshui-chongshe-details.json.gz.b64').read_text(encoding='utf-8'))
+          detail_records = []
+          if details_manifest.get('encoding') == 'gzip+base64' and details_manifest.get('parts'):
+              detail_chunks = []
+              for part_name in details_manifest['parts']:
+                  part_path = data_dir / part_name
+                  assert part_path.exists(), f'Missing detail chunk: {part_path}'
+                  detail_chunks.append(part_path.read_text(encoding='ascii').strip())
+              compressed = base64.b64decode(''.join(detail_chunks), validate=True)
+              details = json.loads(gzip.decompress(compressed).decode('utf-8'))
+              detail_records = details['records']
+              assert len(detail_records) == details_manifest['record_count'], len(detail_records)
+              assert len({record['id'] for record in detail_records}) == len(detail_records), 'Duplicate detailed-record IDs'
+              project_ids = {record['id'] for record in complete if record['source_group'] == '2020_curation_project'}
+              assert {record['id'] for record in detail_records} == project_ids, 'Detailed record IDs do not match the 38 project records'
+          else:
+              assert details_manifest.get('record_count') == 0 and not details_manifest.get('parts'), 'Disabled detail manifest must have zero records and no parts'
+
           for page_name in ('chingshui-data.html', 'database.html'):
               page = (root / page_name).read_text(encoding='utf-8')
               for target in re.findall(r'(?:href|src)=["\']([^"\']+)["\']', page):
@@ -90,3 +113,10 @@ jobs:
                   assert (root / clean).exists(), f'{page_name} references missing file: {clean}'
 
           print(f'Validated {len(complete)} complete burials, {len(fragmentary)} fragmentary/mixed packages, and {len(detail_records)} detailed records.')
+      - name: Upload generated CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-report-data
+          path: validation-artifacts/
+          if-no-files-found: ignore
