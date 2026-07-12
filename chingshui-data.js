@@ -11,6 +11,27 @@ const textOrDash = (value) => value && String(value).trim() ? value : '—';
 
 function status(message) { $('dataStatus').textContent = message; }
 
+async function loadPartitionedJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  const manifest = await response.json();
+  if (Array.isArray(manifest.records)) return manifest;
+  if (!Array.isArray(manifest.parts)) throw new Error(`${url}: invalid dataset manifest`);
+  const base = new URL(url, window.location.href);
+  const parts = await Promise.all(manifest.parts.map(name => fetch(new URL(name, base)).then(r => { if (!r.ok) throw new Error(`${name}: ${r.status}`); return r.json(); })));
+  return { ...manifest, records: parts.flatMap(part => part.records || []) };
+}
+
+async function loadDetailBase64(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  const manifest = await response.json();
+  if (!Array.isArray(manifest.parts)) throw new Error(`${url}: invalid detail manifest`);
+  const base = new URL(url, window.location.href);
+  const chunks = await Promise.all(manifest.parts.map(name => fetch(new URL(name, base)).then(r => { if (!r.ok) throw new Error(`${name}: ${r.status}`); return r.text(); })));
+  return chunks.join('');
+}
+
 async function decodeGzipBase64(text) {
   if (!('DecompressionStream' in window)) throw new Error('This browser does not support in-browser gzip decompression.');
   const clean = text.replace(/\s+/g, '');
@@ -167,12 +188,10 @@ function downloadFullData() {
 
 async function loadData() {
   try {
-    const [complete, fragmentary] = await Promise.all(Object.values(DATA_URLS).map(url => fetch(url).then(r => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.json(); })));
+    const [complete, fragmentary] = await Promise.all(Object.values(DATA_URLS).map(loadPartitionedJson));
     state.complete = complete.records; state.fragmentary = fragmentary.records;
     try {
-      const detailsResponse = await fetch(DETAILS_URL);
-      if (!detailsResponse.ok) throw new Error(`${DETAILS_URL}: ${detailsResponse.status}`);
-      const details = await decodeGzipBase64(await detailsResponse.text());
+      const details = await decodeGzipBase64(await loadDetailBase64(DETAILS_URL));
       const detailMap = new Map(details.records.map(r => [r.id, r]));
       state.complete.forEach(r => { r.details_zh = detailMap.get(r.id) || null; });
       state.detailsLoaded = true;
