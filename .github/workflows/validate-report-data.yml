@@ -1,0 +1,115 @@
+name: Validate report dataset
+
+on:
+  pull_request:
+    paths:
+      - 'chingshui-data.*'
+      - 'database.html'
+      - 'index.html'
+      - 'data/**'
+      - '.github/workflows/validate-report-data.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - name: Validate and generate exports
+        shell: python
+        run: |
+          import csv
+          import io
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path('.')
+          data_dir = root / 'data'
+          artifact_dir = root / 'validation-artifacts'
+          artifact_dir.mkdir(exist_ok=True)
+          cjk = re.compile(r'[\u3400-\u9fff]')
+
+          def load_partitioned(path):
+              manifest = json.loads(path.read_text(encoding='utf-8-sig'))
+              records = []
+              for part_name in manifest.get('parts', []):
+                  part_path = path.parent / part_name
+                  assert part_path.exists(), f'Missing partition: {part_path}'
+                  part = json.loads(part_path.read_text(encoding='utf-8-sig'))
+                  records.extend(part.get('records', []))
+              if 'records' in manifest:
+                  records = manifest['records']
+              return manifest, records
+
+          complete_manifest, complete = load_partitioned(data_dir / 'chingshui-chongshe-records.json')
+          assert len(complete) == complete_manifest['record_count'] == 53, len(complete)
+          assert len({record['id'] for record in complete}) == 53, 'Duplicate complete-burial IDs'
+          assert sum(record['source_group'] == '2020_curation_project' for record in complete) == 38
+          assert sum(record['source_group'] == 'prior_curation' for record in complete) == 15
+          assert sum(record['cultural_layer_en'] == 'Upper cultural layer' for record in complete) == 15
+          assert sum(record['cultural_layer_en'] == 'Lower cultural layer' for record in complete) == 38
+
+          untranslated = []
+          for record in complete:
+              for key, value in record.items():
+                  if key.endswith('_en') and isinstance(value, str) and cjk.search(value):
+                      untranslated.append(f"{record['id']}:{key}={value}")
+          assert not untranslated, 'Untranslated English fields:\n' + '\n'.join(untranslated)
+
+          csv_fields = [
+              'id','layer','cultural_layer_en','cultural_layer_zh','head_direction',
+              'body_position_en','body_position_zh','limb_position_en','limb_position_zh',
+              'arm_position_en','arm_position_zh','sex_en','sex_zh','age_en','age_zh',
+              'pathology_en','pathology_zh','notes_en','notes_zh','source_group','source_report_pages'
+          ]
+          csv_buffer = io.StringIO(newline='')
+          writer = csv.DictWriter(csv_buffer, fieldnames=csv_fields, extrasaction='ignore', lineterminator='\n')
+          writer.writeheader()
+          writer.writerows(complete)
+          generated_csv = '\ufeff' + csv_buffer.getvalue()
+          generated_path = artifact_dir / 'chingshui-chongshe-records.csv'
+          generated_path.write_text(generated_csv, encoding='utf-8')
+          committed_csv = (data_dir / 'chingshui-chongshe-records.csv').read_text(encoding='utf-8')
+          assert committed_csv == generated_csv, 'Complete-burial CSV is out of sync with the JSON records.'
+
+          fragmentary_manifest = json.loads((data_dir / 'chingshui-chongshe-fragmentary.json').read_text(encoding='utf-8-sig'))
+          fragmentary = fragmentary_manifest['records']
+          assert len(fragmentary) == 15, len(fragmentary)
+          assert len({record['id'] for record in fragmentary}) == 15, 'Duplicate fragmentary IDs'
+          assert sum(record['record_type'] == 'fragmentary_human' for record in fragmentary) == 8
+          assert sum(record['record_type'] == 'animal_or_mixed' for record in fragmentary) == 7
+          fragmentary_csv = list(csv.DictReader((data_dir / 'chingshui-chongshe-fragmentary.csv').open(encoding='utf-8-sig', newline='')))
+          assert len(fragmentary_csv) == 15, len(fragmentary_csv)
+
+          fragmentary_untranslated = []
+          for record in fragmentary:
+              for key, value in record.items():
+                  if key.endswith('_en') and isinstance(value, str) and cjk.search(value):
+                      fragmentary_untranslated.append(f"{record['id']}:{key}={value}")
+          assert not fragmentary_untranslated, 'Untranslated fragmentary English fields:\n' + '\n'.join(fragmentary_untranslated)
+
+          for page_name in ('chingshui-data.html', 'database.html'):
+              page = (root / page_name).read_text(encoding='utf-8')
+              for target in re.findall(r'(?:href|src)=["\']([^"\']+)["\']', page):
+                  if target.startswith(('http:', 'https:', '#', 'mailto:')):
+                      continue
+                  clean = target.split('#', 1)[0].split('?', 1)[0]
+                  if not clean:
+                      continue
+                  assert (root / clean).exists(), f'{page_name} references missing file: {clean}'
+
+          assert 'chingshui-chongshe-details' not in (root / 'chingshui-data.js').read_text(encoding='utf-8')
+          print(f'Validated {len(complete)} complete burials and {len(fragmentary)} fragmentary/mixed packages.')
+      - name: Upload generated CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-report-data
+          path: validation-artifacts/
+          if-no-files-found: ignore

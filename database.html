@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Research datasets for the East and Southeast Asia Archaeology Project." />
   <title>Database | Asia Archaeology Project</title>
   <link rel="stylesheet" href="site.css" />
 </head>
@@ -15,6 +16,8 @@
         <a href="project-description.html">Project</a>
         <a href="map.html">Map</a>
         <a class="active" href="database.html">Database</a>
+        <a href="skeletal-recording.html">Skeletal Recording</a>
+        <a href="chingshui-data.html">Report Data</a>
         <a href="visualizations.html">Visualizations</a>
         <a href="photographs.html">Photographs</a>
         <a href="bibliography.html">Bibliography</a>
@@ -27,70 +30,56 @@
       <div class="page-hero-inner">
         <p class="eyebrow">Quantitative Research</p>
         <h1>Research Database</h1>
-        <p>Use this page to publish cleaned numbers, sample information, measurements, dates, and comparative site data.</p>
+        <p>Cleaned, source-traceable archaeological and bioarchaeological datasets for analysis, comparison, and visualization.</p>
       </div>
     </section>
 
     <div class="content-layout">
       <section class="content-panel">
-        <h2>About the Dataset</h2>
-        <p class="placeholder"><strong>Replace this text:</strong> Describe what each row represents, where the values come from, the units used, and how missing or uncertain data are recorded.</p>
+        <h2>Qingshui Zhongshe Human Burial Dataset</h2>
+        <p>This bilingual dataset is derived from the 2024 final report for the ROC Year 109 (2020) Qingshui Zhongshe archaeological human-remains curation project. It combines 38 complete burial records documented individually in the report with 15 complete burial summaries reproduced from earlier curation projects.</p>
+        <p>Structured fields retain both an English research translation and the original Traditional Chinese value. Source-group and printed-page fields connect each record to the report. This release translates and structures burial summaries rather than claiming a line-by-line translation of all 436 pages or reproducing the complete individual recording forms.</p>
+        <p><a class="button primary" href="chingshui-data.html">Open the bilingual record browser</a></p>
       </section>
 
       <section class="content-panel">
-        <h2>Site Data</h2>
-        <p>The table below is a starter structure. Replace the sample rows and add or remove columns as your research develops.</p>
+        <h2>Dataset Coverage</h2>
         <div class="data-table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Site</th>
-                <th>Country/Region</th>
-                <th>Period</th>
-                <th>Date Range</th>
-                <th>Sample Size</th>
-                <th>Primary Variable</th>
-                <th>Source</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Dataset</th><th>Records</th><th>Content</th><th>Translation status</th></tr></thead>
             <tbody>
-              <tr>
-                <td>Example Site A</td>
-                <td>Replace region</td>
-                <td>Replace period</td>
-                <td>Replace dates</td>
-                <td>0</td>
-                <td>Replace value</td>
-                <td>Author, Year</td>
-              </tr>
-              <tr>
-                <td>Example Site B</td>
-                <td>Replace region</td>
-                <td>Replace period</td>
-                <td>Replace dates</td>
-                <td>0</td>
-                <td>Replace value</td>
-                <td>Author, Year</td>
-              </tr>
+              <tr><td>Complete human burials</td><td>53</td><td>Layer, cultural layer, orientation, posture, sex, age, pathology, notes, source group, and printed report pages</td><td>Structured summary fields translated; original Chinese retained</td></tr>
+              <tr><td>Fragmentary human packages</td><td>8</td><td>Unit, layer, orientation/posture where known, preservation, and surviving elements</td><td>Translated from Table 7 and the associated narrative</td></tr>
+              <tr><td>Animal or mixed packages</td><td>7</td><td>Original excavation interpretation and post-curation reassessment</td><td>Translated from Table 8 and the associated narrative</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section class="content-panel">
-        <h2>Data Dictionary</h2>
-        <p class="placeholder"><strong>Replace this text:</strong> Define column names, coding conventions, units, abbreviations, and uncertainty categories here.</p>
+        <h2>Downloads</h2>
+        <div class="data-table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Format</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td><a href="data/chingshui-chongshe-records.csv" download>Complete burial summaries</a></td><td>CSV</td><td>Spreadsheet analysis, statistics, and visualization</td></tr>
+              <tr><td><a href="data/chingshui-chongshe-records.json" download>Complete burial summary manifest</a></td><td>JSON</td><td>Static-site loading and access to the six partitioned record files</td></tr>
+              <tr><td><a href="data/chingshui-chongshe-fragmentary.csv" download>Fragmentary / animal / mixed summaries</a></td><td>CSV</td><td>Spreadsheet analysis</td></tr>
+              <tr><td><a href="data/chingshui-chongshe-fragmentary.json" download>Fragmentary / animal / mixed records</a></td><td>JSON</td><td>Web applications and database import</td></tr>
+              <tr><td><a href="data/README.md">Data documentation</a></td><td>Markdown</td><td>Scope, uncertainty, translation, and page-reference notes</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section class="content-panel">
-        <h2>Downloads</h2>
-        <p class="placeholder"><strong>Future addition:</strong> Add links here to CSV, Excel, JSON, or other downloadable research files once they are ready for publication.</p>
+        <h2>Source &amp; Translation Notes</h2>
+        <p><strong>Source:</strong> 《109 年清水中社考古遺址出土人骨整理計畫：結案報告書》, commissioned by the Taichung City Cultural Heritage Department, conducted by the Institute of Archaeology at National Cheng Kung University, and dated May 17, 2024.</p>
+        <p>Page references use the printed report page numbers. Uncertainty categories such as probable, indeterminate, unobservable, and unknown are preserved. The English text is a research translation, not a substitute for checking the original report before formal publication.</p>
       </section>
     </div>
   </main>
 
-  <footer class="site-footer">
-    <p>East & Southeast Asia Archaeology Project · Digital research website</p>
-  </footer>
+  <footer class="site-footer"><p>East &amp; Southeast Asia Archaeology Project · Digital research website</p></footer>
 </body>
 </html>

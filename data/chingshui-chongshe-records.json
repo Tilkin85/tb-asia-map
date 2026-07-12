@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "dataset_title": "Qingshui Zhongshe Human Burial Dataset",
+    "source_title_zh": "109 年清水中社考古遺址出土人骨整理計畫：結案報告書",
+    "source_title_en": "Final Report: 2020 Qingshui Zhongshe Archaeological Site Excavated Human Remains Curation Project",
+    "commissioning_agency_zh": "臺中市文化資產處",
+    "commissioning_agency_en": "Taichung City Cultural Heritage Department",
+    "executing_institution_zh": "國立成功大學考古學研究所",
+    "executing_institution_en": "Institute of Archaeology, National Cheng Kung University",
+    "principal_investigators_zh": "莊家銘、趙金勇",
+    "report_date": "2024-05-17",
+    "coverage": "53 complete human burials: 38 curated in the project and 15 summarized from earlier curation projects.",
+    "translation_scope": "Structured English translation of the complete-burial summary dataset, plus original Traditional Chinese detailed record text for the 38 burials curated in this project. This is not yet a line-by-line English translation of all 436 report pages.",
+    "report_page_convention": "Page numbers refer to the printed report pages, not the PDF viewer page index."
+  },
+  "record_count": 53,
+  "parts": [
+    "chingshui-chongshe-records-part-01.json",
+    "chingshui-chongshe-records-part-02.json",
+    "chingshui-chongshe-records-part-03.json",
+    "chingshui-chongshe-records-part-04.json",
+    "chingshui-chongshe-records-part-05.json",
+    "chingshui-chongshe-records-part-06.json"
+  ]
+}

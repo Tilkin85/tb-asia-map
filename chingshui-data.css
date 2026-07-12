@@ -1,0 +1,44 @@
+.report-data-shell { grid-template-columns: 270px minmax(0, 1fr); }
+.report-record-sidebar hr { border: 0; border-top: 1px solid var(--line); margin: 14px 0; }
+.record-list { display: grid; gap: 3px; margin-top: 6px; }
+.record-list button { width: 100%; border: 0; border-radius: 6px; padding: 7px 8px; text-align: left; background: transparent; color: var(--muted); font: .8rem Arial, Helvetica, sans-serif; cursor: pointer; }
+.record-list button:hover, .record-list button.active { background: var(--sage); color: var(--ink); font-weight: 700; }
+.report-toolbar label { display: grid; gap: 3px; color: var(--muted); font: 700 .72rem Arial, Helvetica, sans-serif; }
+.report-toolbar select, .report-toolbar input { min-width: 155px; border: 1px solid #bdb7aa; border-radius: 5px; padding: 7px 8px; background: white; color: var(--ink); font: .82rem Arial, Helvetica, sans-serif; }
+.report-toolbar .search-label { flex: 1 1 210px; }
+.report-toolbar .search-label input { width: 100%; }
+.overview-kpis { margin-top: 18px; }
+.kpi { min-height: 112px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: #fbf8f1; }
+.kpi strong { display: block; font-size: 2rem; line-height: 1; color: var(--accent-dark); }
+.kpi span { display: block; margin-top: 8px; color: var(--muted); font: .84rem Arial, Helvetica, sans-serif; }
+.bilingual-source-grid, .bilingual-text-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.bilingual-source-grid > div, .bilingual-text-grid > div { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: #fbf8f1; }
+.bilingual-source-grid h3, .bilingual-text-grid h3 { margin-top: 0; }
+.ethics-note { padding: 14px 16px; border-left: 4px solid #5c6f61; background: #edf2ed; font-family: Arial, Helvetica, sans-serif; font-size: .9rem; }
+.download-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.data-readme-button { border: 1px solid var(--accent); color: var(--accent-dark); }
+.record-heading-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.record-heading-row .eyebrow { color: var(--accent); }
+.record-badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+.record-badge { display: inline-block; border-radius: 999px; padding: 5px 9px; background: var(--sage); color: var(--ink); font: 700 .72rem Arial, Helvetica, sans-serif; }
+.record-badge.warn { background: #f2e4c6; }
+.record-badge.dark { background: #2e4036; color: white; }
+.summary-field { padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: white; }
+.summary-field strong { display: block; color: var(--muted); font: 700 .72rem Arial, Helvetica, sans-serif; text-transform: uppercase; letter-spacing: .05em; }
+.summary-field span { display: block; margin-top: 5px; font-family: Arial, Helvetica, sans-serif; }
+.bilingual-table { width: 100%; min-width: 680px; }
+.bilingual-table th { width: 22%; }
+.bilingual-table td { width: 39%; }
+.bilingual-table .zh { font-family: "Noto Serif TC", "Microsoft JhengHei", serif; }
+.read-only-text { min-height: 76px; white-space: pre-wrap; font-family: Arial, Helvetica, sans-serif; }
+.notes-grid { margin-top: 18px; }
+.detail-section { margin: 10px 0; border: 1px solid var(--line); border-radius: 9px; background: white; }
+.detail-section summary { cursor: pointer; padding: 12px 14px; font: 700 .86rem Arial, Helvetica, sans-serif; background: var(--sage); }
+.detail-section pre { max-height: 520px; overflow: auto; margin: 0; padding: 14px; white-space: pre-wrap; word-break: break-word; background: #fbf8f1; font: .78rem/1.55 "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif; }
+.empty-detail { padding: 18px; border: 1px dashed #b8b0a2; border-radius: 9px; color: var(--muted); background: #fbf8f1; }
+code { font-size: .84em; }
+@media (max-width: 1100px) { .report-data-shell { grid-template-columns: 1fr; } .record-list { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); } }
+@media (max-width: 760px) { .bilingual-source-grid, .bilingual-text-grid { grid-template-columns: 1fr; } .record-heading-row { display: block; } .record-badges { justify-content: flex-start; margin-top: 10px; } }
+@media print { .download-row, .ethics-note { display: none; } .detail-section pre { max-height: none; overflow: visible; } }
+
+.download-button { border: 0; cursor: pointer; font-size: 1rem; }
