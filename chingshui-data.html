@@ -43,7 +43,7 @@
       <a href="#burial-context">Burial context</a>
       <a href="#biological-profile">Biological profile</a>
       <a href="#pathology">Pathology &amp; notes</a>
-      <a href="#source-detail">Detailed source text</a>
+      <a href="#source-notes">Source &amp; verification</a>
       <a href="#data-dictionary">Data dictionary</a>
       <hr />
       <strong id="recordListTitle">Complete burials</strong>
@@ -71,7 +71,7 @@
         <span id="dataStatus" aria-live="polite">Loading data…</span>
       </div>
 
-      <p class="recording-notice"><strong>Translation scope:</strong> the structured summary fields are translated into English and retain the original Traditional Chinese values. For the 38 complete burials curated in this project, the extracted detailed source text is available in Chinese for verification and future line-by-line translation. Uncertainty terms from the report are preserved.</p>
+      <p class="recording-notice"><strong>Translation scope:</strong> structured burial-summary fields are translated into English and retain the original Traditional Chinese values. The release does not claim a line-by-line translation of all 436 report pages. Probability, observability, and other uncertainty terms are preserved from the report.</p>
 
       <section class="recording-card" id="overview">
         <h2>Source Report &amp; Dataset Overview</h2>
@@ -79,7 +79,7 @@
           <div class="kpi"><strong id="completeCount">53</strong><span>Complete human burial records</span></div>
           <div class="kpi"><strong id="upperCount">15</strong><span>Upper cultural layer</span></div>
           <div class="kpi"><strong id="lowerCount">38</strong><span>Lower cultural layer</span></div>
-          <div class="kpi"><strong id="projectCount">38</strong><span>Detailed records curated in this project</span></div>
+          <div class="kpi"><strong id="projectCount">38</strong><span>Current-project burial summaries</span></div>
           <div class="kpi"><strong id="priorCount">15</strong><span>Earlier curated records summarized</span></div>
           <div class="kpi"><strong id="fragmentCount">15</strong><span>Fragmentary / animal / mixed packages</span></div>
         </div>
@@ -96,8 +96,7 @@
         <p class="ethics-note"><strong>Ethical-use note:</strong> these are records of ancestral human remains. Data should be used with care, with attention to the policies of the holding agency and the interests of descendant and Indigenous communities. No photographs of human remains are reproduced here.</p>
         <div class="download-row">
           <a class="button primary" href="data/chingshui-chongshe-records.csv" download>Download complete-burial CSV</a>
-          <a class="button primary" href="data/chingshui-chongshe-records.json" download>Download summary JSON</a>
-          <button class="button primary download-button" type="button" id="downloadFullData">Build full detailed JSON</button>
+          <a class="button primary" href="data/chingshui-chongshe-records.json" download>Download complete-burial JSON</a>
           <a class="button primary" href="data/chingshui-chongshe-fragmentary.csv" download>Download fragmentary CSV</a>
           <a class="button primary" href="data/chingshui-chongshe-fragmentary.json" download>Download fragmentary JSON</a>
           <a class="button data-readme-button" href="data/README.md">Read data documentation</a>
@@ -138,8 +137,8 @@
         </div>
       </section>
 
-      <section class="recording-card" id="source-detail">
-        <h2>4. Detailed Source Text / 詳細原始資料</h2>
+      <section class="recording-card" id="source-notes">
+        <h2>4. Source &amp; Verification / 來源與核對</h2>
         <p id="detailNotice" class="field-help"></p>
         <div id="detailSections"></div>
       </section>
@@ -150,14 +149,14 @@
           <table class="recording-table">
             <thead><tr><th>Field</th><th>Meaning</th><th>Notes</th></tr></thead>
             <tbody>
-              <tr><th>source_group</th><td>Origin of the summary record</td><td><code>2020_curation_project</code> = the 38 records individually documented in this report; <code>prior_curation</code> = 15 records summarized from earlier projects.</td></tr>
+              <tr><th>source_group</th><td>Origin of the summary record</td><td><code>2020_curation_project</code> = 38 burials individually documented in this report; <code>prior_curation</code> = 15 records summarized from earlier projects.</td></tr>
               <tr><th>layer</th><td>Excavation stratigraphic layer</td><td>Values are transcribed exactly, such as L3a, L3e, or L4.</td></tr>
               <tr><th>head_direction</th><td>Orientation of the head</td><td>E40°S means 40 degrees south of east. X or unknown indicates that orientation could not be established.</td></tr>
               <tr><th>body / limb / arm position</th><td>Burial posture</td><td>Prone, supine, or side-lying; extended or flexed limbs; arm placement is retained as a separate field.</td></tr>
               <tr><th>sex / age</th><td>Report assessment</td><td>Probability and observability language is preserved. Juvenile sex was generally not assessed.</td></tr>
               <tr><th>pathology</th><td>Observed pathological or anomalous features</td><td>LEH = linear enamel hypoplasia. “No obvious pathology” does not mean the individual was disease-free; it reflects what was observable.</td></tr>
               <tr><th>source_report_pages</th><td>Printed report page range</td><td>Not the PDF viewer page number.</td></tr>
-              <tr><th>details_zh</th><td>Detailed record text</td><td>Traditional Chinese text extracted from the individual burial section, including inventory and measurement text where present. Formatting may reflect PDF extraction.</td></tr>
+              <tr><th>translation_status</th><td>Scope of the English record</td><td>Identifies the record as a research translation of structured summary fields rather than a full-page translation.</td></tr>
             </tbody>
           </table>
         </div>
