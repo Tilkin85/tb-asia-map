@@ -1,0 +1,15 @@
+{
+  "encoding": "gzip+base64",
+  "record_count": 38,
+  "parts": [
+    "chingshui-chongshe-details-part-01.b64",
+    "chingshui-chongshe-details-part-02.b64",
+    "chingshui-chongshe-details-part-03.b64",
+    "chingshui-chongshe-details-part-04.b64",
+    "chingshui-chongshe-details-part-05.b64",
+    "chingshui-chongshe-details-part-06.b64",
+    "chingshui-chongshe-details-part-07.b64",
+    "chingshui-chongshe-details-part-08.b64",
+    "chingshui-chongshe-details-part-09.b64"
+  ]
+}
