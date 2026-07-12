@@ -38,7 +38,7 @@
       <section class="content-panel">
         <h2>Qingshui Zhongshe Human Burial Dataset</h2>
         <p>This bilingual dataset is derived from the 2024 final report for the ROC Year 109 (2020) Qingshui Zhongshe archaeological human-remains curation project. It combines 38 complete burial records documented individually in the report with 15 complete burial summaries reproduced from earlier curation projects.</p>
-        <p>Every structured field retains both the English research translation and the original Traditional Chinese value. The 38 project records also include extracted detailed Chinese source text for skeletal preservation, dental data, sex and age assessment, nonmetric traits, measurements, and pathology where those sections occur in the report.</p>
+        <p>Structured fields retain both an English research translation and the original Traditional Chinese value. Source-group and printed-page fields connect each record to the report. This release translates and structures burial summaries rather than claiming a line-by-line translation of all 436 pages or reproducing the complete individual recording forms.</p>
         <p><a class="button primary" href="chingshui-data.html">Open the bilingual record browser</a></p>
       </section>
 
@@ -48,8 +48,8 @@
           <table>
             <thead><tr><th>Dataset</th><th>Records</th><th>Content</th><th>Translation status</th></tr></thead>
             <tbody>
-              <tr><td>Complete human burials</td><td>53</td><td>Layer, cultural layer, orientation, posture, sex, age, pathology, notes, sources; detailed Chinese text for 38 records</td><td>Structured summary fields translated; original Chinese retained</td></tr>
-              <tr><td>Fragmentary human packages</td><td>8</td><td>Unit, layer, orientation/posture where known, preservation, surviving elements</td><td>Translated from Table 7 and the associated narrative</td></tr>
+              <tr><td>Complete human burials</td><td>53</td><td>Layer, cultural layer, orientation, posture, sex, age, pathology, notes, source group, and printed report pages</td><td>Structured summary fields translated; original Chinese retained</td></tr>
+              <tr><td>Fragmentary human packages</td><td>8</td><td>Unit, layer, orientation/posture where known, preservation, and surviving elements</td><td>Translated from Table 7 and the associated narrative</td></tr>
               <tr><td>Animal or mixed packages</td><td>7</td><td>Original excavation interpretation and post-curation reassessment</td><td>Translated from Table 8 and the associated narrative</td></tr>
             </tbody>
           </table>
@@ -63,7 +63,7 @@
             <thead><tr><th>File</th><th>Format</th><th>Use</th></tr></thead>
             <tbody>
               <tr><td><a href="data/chingshui-chongshe-records.csv" download>Complete burial summaries</a></td><td>CSV</td><td>Spreadsheet analysis, statistics, and visualization</td></tr>
-              <tr><td><a href="data/chingshui-chongshe-records.json" download>Complete burial records with detailed source text</a></td><td>JSON</td><td>Web applications, database import, and field-level provenance</td></tr>
+              <tr><td><a href="data/chingshui-chongshe-records.json" download>Complete burial summary manifest</a></td><td>JSON</td><td>Static-site loading and access to the six partitioned record files</td></tr>
               <tr><td><a href="data/chingshui-chongshe-fragmentary.csv" download>Fragmentary / animal / mixed summaries</a></td><td>CSV</td><td>Spreadsheet analysis</td></tr>
               <tr><td><a href="data/chingshui-chongshe-fragmentary.json" download>Fragmentary / animal / mixed records</a></td><td>JSON</td><td>Web applications and database import</td></tr>
               <tr><td><a href="data/README.md">Data documentation</a></td><td>Markdown</td><td>Scope, uncertainty, translation, and page-reference notes</td></tr>
@@ -80,6 +80,6 @@
     </div>
   </main>
 
-  <footer class="site-footer"><p>East & Southeast Asia Archaeology Project · Digital research website</p></footer>
+  <footer class="site-footer"><p>East &amp; Southeast Asia Archaeology Project · Digital research website</p></footer>
 </body>
 </html>
