@@ -6,13 +6,12 @@ These files were derived from the 2024 final report for the ROC Year 109 (2020) 
 - `chingshui-chongshe-records.csv`: flattened bilingual summary table for spreadsheet analysis.
 - `chingshui-chongshe-fragmentary.json`: 15 fragmentary packages, including eight human fragment groups and seven animal or mixed groups.
 - `chingshui-chongshe-fragmentary.csv`: flattened fragmentary-package table.
-- `chingshui-chongshe-details.json.gz.b64`: scope notice. Detailed individual-record source text is not published in this pull request.
 
 ## Translation and uncertainty
 
 English fields are research translations intended for discovery and data analysis. Original Traditional Chinese values are retained beside the translations. Terms such as “probable,” “indeterminate,” “unobservable,” and “unknown” preserve the uncertainty reported by the original authors.
 
-This release translates and structures the burial-summary data rather than claiming a line-by-line English translation of all 436 report pages. The detailed individual recording tables should be checked directly against the source report before formal publication or secondary analysis.
+This release translates and structures the burial-summary data rather than claiming a line-by-line English translation of all 436 report pages. Complete individual recording tables, photographs, and extended narrative should be checked directly against the source report before formal publication or secondary analysis.
 
 ## Source page numbering
 
