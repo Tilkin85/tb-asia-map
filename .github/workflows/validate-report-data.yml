@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'chingshui-data.*'
+      - 'chingshui-visuals.*'
       - 'database.html'
       - 'index.html'
       - 'data/**'
@@ -94,7 +95,7 @@ jobs:
                       fragmentary_untranslated.append(f"{record['id']}:{key}={value}")
           assert not fragmentary_untranslated, 'Untranslated fragmentary English fields:\n' + '\n'.join(fragmentary_untranslated)
 
-          for page_name in ('chingshui-data.html', 'database.html'):
+          for page_name in ('chingshui-data.html', 'chingshui-visuals.html', 'database.html'):
               page = (root / page_name).read_text(encoding='utf-8')
               for target in re.findall(r'(?:href|src)=["\']([^"\']+)["\']', page):
                   if target.startswith(('http:', 'https:', '#', 'mailto:')):
@@ -106,6 +107,8 @@ jobs:
 
           assert 'chingshui-chongshe-details' not in (root / 'chingshui-data.js').read_text(encoding='utf-8')
           print(f'Validated {len(complete)} complete burials and {len(fragmentary)} fragmentary/mixed packages.')
+      - name: Validate visualization JavaScript
+        run: node --check chingshui-visuals.js
       - name: Upload generated CSV
         if: always()
         uses: actions/upload-artifact@v4
