@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Data visualizations derived from the Qingshui Zhongshe archaeological human-remains curation report dataset." />
+  <title>Qingshui Zhongshe Data Visuals | Asia Archaeology Project</title>
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="chingshui-data.css" />
+  <link rel="stylesheet" href="chingshui-visuals.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="brand" href="index.html">Asia Archaeology Project</a>
+    <nav aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="project-description.html">Project</a>
+      <a href="map.html">Map</a>
+      <a href="database.html">Database</a>
+      <a href="skeletal-recording.html">Skeletal Recording</a>
+      <a class="active" href="chingshui-data.html">Report Data</a>
+      <a href="visualizations.html">Visualizations</a>
+      <a href="photographs.html">Photographs</a>
+      <a href="bibliography.html">Bibliography</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero visuals-hero">
+    <div class="page-hero-inner">
+      <p class="eyebrow">Qingshui Zhongshe Report Data</p>
+      <h1>Data Visuals</h1>
+      <p>Seventeen responsive visual summaries of burial orientation, demography, mortuary treatment, stratigraphy, pathology, and assemblage composition.</p>
+    </div>
+  </section>
+
+  <nav class="report-subnav" aria-label="Qingshui Zhongshe report data sections">
+    <a href="chingshui-data.html">Dataset Explorer</a>
+    <a class="active" href="chingshui-visuals.html" aria-current="page">Data Visuals</a>
+  </nav>
+
+  <section class="visuals-layout">
+    <aside class="visuals-index" aria-label="Visualization sections">
+      <strong>Visual sections</strong>
+      <a href="#overview">Site profile</a>
+      <a href="#orientation">Orientation</a>
+      <a href="#demography">Demography</a>
+      <a href="#mortuary">Mortuary treatment</a>
+      <a href="#stratigraphy">Stratigraphy</a>
+      <a href="#pathology">Palaeopathology</a>
+      <a href="#assemblage">Assemblage</a>
+      <p id="visualStatus" class="visual-status" aria-live="polite">Loading report data…</p>
+    </aside>
+
+    <div class="visuals-main">
+      <section id="overview" class="visual-section">
+        <div class="visual-section-heading">
+          <p class="eyebrow">Overview</p>
+          <h2>Site Osteological Profile</h2>
+          <p>A compact dashboard of the principal patterns represented in the report dataset.</p>
+        </div>
+        <article class="profile-dashboard">
+          <div class="profile-title-row">
+            <div>
+              <h3>Qingshui Zhongshe · Site Osteological Profile</h3>
+              <p>A prone-burial cemetery with tightly shared orientation, spanning two cultural layers.</p>
+            </div>
+          </div>
+          <div class="profile-kpis" id="profileKpis"></div>
+          <div class="profile-grid">
+            <div class="profile-mini"><h4>Head orientation</h4><div id="profileOrientation" class="chart-host compact-chart"></div></div>
+            <div class="profile-mini"><h4>Body position</h4><div id="profileBody" class="chart-host compact-chart"></div></div>
+            <div class="profile-mini"><h4>Age-at-death</h4><div id="profileAge" class="chart-host compact-chart"></div></div>
+            <div class="profile-mini profile-wide"><h4>Most common pathologies</h4><div id="profilePathology" class="chart-host compact-chart"></div></div>
+            <div class="profile-observations">
+              <h4>Key observations</h4>
+              <ul>
+                <li>Prone burial is the dominant rite in both cultural layers.</li>
+                <li>Recorded heads cluster toward the east-southeast, with one reversed outlier.</li>
+                <li>Oral-health markers and degenerative change dominate the pathology record.</li>
+                <li>Pottery appears over the face, beneath the body, or as accompanying jars.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section id="orientation" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Orientation</p><h2>Burial Direction</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card tall-card">
+            <div class="visual-card-heading"><h3>Burial Head Orientation</h3><p>Polar histogram of recorded head azimuths.</p></div>
+            <div id="orientationRose" class="chart-host"></div>
+            <figcaption id="orientationCaption">Direction data are calculated from the report’s compass notation.</figcaption>
+          </figure>
+          <figure class="visual-card wide-card">
+            <div class="visual-card-heading"><h3>Head Orientation across Cultural Layers</h3><p>Individual azimuths, layer means, and the reversed burial outlier.</p></div>
+            <div id="orientationLayer" class="chart-host"></div>
+            <figcaption>Azimuth convention: 90° = east, 180° = south, 270° = west.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="demography" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Demography</p><h2>Sex and Age-at-Death</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card"><div class="visual-card-heading"><h3>Sex Estimation</h3><p>A third of individuals could not be confidently sexed.</p></div><div id="sexDonut" class="chart-host"></div><figcaption>Categories combine probable and more certain assessments.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Age-at-Death Distribution</h3><p>The cemetery skews toward younger and mature adults.</p></div><div id="ageDistribution" class="chart-host"></div><figcaption>Age categories follow the synthesized groupings used in the report visuals.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Age × Sex Structure</h3><p>Diverging age-sex distribution for the 53 catalogued burials.</p></div><div id="ageSexPyramid" class="chart-host"></div><figcaption>Juvenile sex was generally not assessed and is shown as indeterminate.</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="mortuary" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Mortuary treatment</p><h2>Burial Posture and Grave Goods</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Body Position</h3><p>Prone burial is the defining mortuary pattern.</p></div><div id="bodyPosition" class="chart-host"></div><figcaption>35 of 53 catalogued burials were recorded prone.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Limb Position</h3><p>Extended limbs are nearly universal; flexed cases are side-lying subadults.</p></div><div id="limbPosition" class="chart-host"></div><figcaption>Unknown values reflect incomplete or unclear field observations.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Sex × Body Position</h3><p>Prone burial occurs across all sex-estimation categories.</p></div><div id="sexBodyHeatmap" class="chart-host"></div><figcaption>The burial rite does not appear sex-selective in this dataset.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Mortuary Treatment &amp; Grave Goods</h3><p>Pottery recurs as face-covering, body-lining, or accompanying vessels.</p></div><div id="graveGoods" class="chart-host"></div><figcaption>Counts are synthesized from the field-note descriptions.</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="stratigraphy" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Stratigraphy</p><h2>Cultural Layers and Burial Practice</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card tall-card"><div class="visual-card-heading"><h3>Burials by Stratigraphic Layer</h3><p>Deeper lower-layer contexts contain most interments.</p></div><div id="stratigraphyChart" class="chart-host"></div><figcaption>Upper and lower cultural layers are distinguished by color.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Body Position across Cultural Layers</h3><p>Prone burial persists as the norm in both periods.</p></div><div id="positionLayer" class="chart-host"></div><figcaption>Lower layer n=38; upper layer n=15.</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="pathology" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Palaeopathology</p><h2>Health and Degenerative Change</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card tall-card"><div class="visual-card-heading"><h3>Palaeopathology Prevalence</h3><p>Oral-health markers and degenerative change are the most common conditions.</p></div><div id="pathologyPrevalence" class="chart-host"></div><figcaption>Individuals affected among 53 catalogued burials.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Pathology Rates: Upper vs Lower Layer</h3><p>Selected condition prevalence standardized by layer population.</p></div><div id="pathologyLayer" class="chart-host"></div><figcaption>Percentages permit comparison despite unequal layer sample sizes.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Pathology Load Rises with Age-at-Death</h3><p>Mean distinct conditions per individual by age group.</p></div><div id="pathologyAge" class="chart-host"></div><figcaption>Accumulated wear, dental disease, and degenerative change contribute to the pattern.</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="assemblage" class="visual-section">
+        <div class="visual-section-heading"><p class="eyebrow">Assemblage</p><h2>Recovered Remains and Reassessment</h2></div>
+        <div class="visual-grid">
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Composition of the Recovered Assemblage</h3><p>Most records are fully catalogued human burials.</p></div><div id="assemblageComposition" class="chart-host"></div><figcaption>Total: 68 records, including fragmentary and animal/mixed deposits.</figcaption></figure>
+          <figure class="visual-card wide-card"><div class="visual-card-heading"><h3>Fragmentary &amp; Faunal Deposits</h3><p>Original field identification compared with later reassessment.</p></div><div id="faunalReassessment" class="chart-host"></div><figcaption>Three of seven faunal/mixed deposits contained commingled human bone.</figcaption></figure>
+        </div>
+      </section>
+
+      <p class="visual-method-note"><strong>Interpretive note:</strong> These graphics summarize the structured report dataset and selected field-note syntheses. They should be read alongside the source report, original recording tables, and uncertainty language preserved in the Dataset Explorer.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><p>East &amp; Southeast Asia Archaeology Project · Qingshui Zhongshe data visualizations</p></footer>
+<script src="chingshui-visuals.js"></script>
+</body>
+</html>
